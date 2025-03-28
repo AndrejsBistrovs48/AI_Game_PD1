@@ -1,15 +1,14 @@
 class TreeNode:
-    def __init__(self, number, p1_turn: bool = True, scores = [0, 0], bank=0, parent = None):
+    def __init__(self, number, p1_turn: bool = True, scores = [0, 0], bank=0):
         # katram koka elementam pievienojam spēles stāvokļus
         self.number = int(number)
         self.scores = scores.copy()
         self.bank = bank
         self.children = []
         self.p1_turn = p1_turn # kurš spēlētājs izpilda gājienu
-        self.parent = parent # glābā parent elementu lai vieglāk izpildīt algoritmus
         self.finished = (self.number <= 10) or not (self.number % 2 == 0 or self.number % 3 == 0)
         # uzreiz izveidojam elementam bērnus (un viņi arī sev rekursīvi izveidos bērnus)
-        self.generate_children()
+        if scores == [0,0]: self.generate_children()
     
     def __eq__(self, node2): # funkcija spēles stāvokļu salīdzināšanai (node1 == node2)
         return (
@@ -25,6 +24,9 @@ class TreeNode:
     def __hash__(self):
          return hash((self.number, self.scores[0], self.scores[1], self.bank, self.p1_turn))
     
+    def make_child(self, number, p1_turn, scores, bank): # šo funkciju būs jāmaina atvasinātās klasēs
+        return TreeNode(number, p1_turn, scores, bank)
+
     def add_child(self, child):
         self.children.append(child)
     
@@ -32,9 +34,9 @@ class TreeNode:
         def add_child(child):
             # funkcija pārbauda, vai elements jau bija ģenerēts. Ja ir - jaunu neizveido, pievieno jau eksistējošo
             if hash(child) in generated_nodes:
-                self.add_child( generated_nodes[hash(child)] )
+                self.add_child( generated_nodes[hash(child)] ) # TODO: node still generates its children
             else:
-                self.add_child(child)
+                self.add_child(child.generate_children(generated_nodes))
                 generated_nodes[hash(child)] = child
         
         if self.finished: return self
@@ -49,7 +51,7 @@ class TreeNode:
             else:
                 scores[0] += 2
             if (self.number / 2) % 5 == 0: bank += 1 # pievieno 5 punktus bankai
-            add_child( TreeNode(self.number/2, not self.p1_turn, scores, bank, self) ) # pievieno elementu kokam
+            add_child( self.make_child(self.number/2, not self.p1_turn, scores, bank) ) # pievieno elementu kokam (no make_child)
 
 
         if self.number % 3 == 0: # same here bet ar 3
@@ -61,6 +63,6 @@ class TreeNode:
             else:
                 scores[1] += 3
             if (self.number / 3) % 5 == 0: bank += 1
-            add_child( TreeNode(self.number/3, not self.p1_turn, scores, bank, self) )
+            add_child( self.make_child(self.number/3, not self.p1_turn, scores, bank) )
 
         return self
