@@ -5,12 +5,13 @@ class TreeNode:
         self.scores = scores.copy()
         self.bank = bank
         self.children = []
-        self.p1_turn = p1_turn # kurš spēlētājs izpilda gājienu
+        self.p1_turn = p1_turn # kurš spēlētājs izpilda gājienu; p1 = cilvēks
         self.finished = (self.number <= 10) or not (self.number % 2 == 0 or self.number % 3 == 0)
         # uzreiz izveidojam elementam bērnus (un viņi arī sev rekursīvi izveidos bērnus)
         if scores == [0,0]: self.generate_children()
     
     def __eq__(self, node2): # funkcija spēles stāvokļu salīdzināšanai (node1 == node2)
+        if node2 is None: return False
         return (
             self.number == node2.number and
             self.scores == node2.scores and
@@ -19,7 +20,7 @@ class TreeNode:
         )
     
     def __str__(self): # izvada elementu smuki
-        return f"n={self.number}, scores={self.scores}, bank={self.bank}, children={len(self.children)}, player1:{self.p1_turn}"
+        return f"n={self.number}, scores={self.scores}, bank={self.bank}, children={len(self.children)}, player1:{self.p1_turn}, finished={self.finished}"
     
     def __hash__(self):
          return hash((self.number, self.scores[0], self.scores[1], self.bank, self.p1_turn))
@@ -29,6 +30,10 @@ class TreeNode:
 
     def add_child(self, child):
         self.children.append(child)
+        if (self.number / 2) == child.number:
+            self.divide_by_2 = child
+        else:
+            self.divide_by_3 = child
     
     def generate_children(self, generated_nodes = {}):
         def add_child(child):

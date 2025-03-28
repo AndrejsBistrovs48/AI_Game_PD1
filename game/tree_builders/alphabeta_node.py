@@ -1,6 +1,6 @@
 import sys
 sys.path.append('game')
-from tree_builders import MiniMaxTreeNode
+from tree_builders.minimax_node import MiniMaxTreeNode
 
 class AlphaBetaTreeNode(MiniMaxTreeNode):
     def __init__(self, number, p1_turn = True, scores=[0,0], bank=0):
@@ -25,5 +25,4 @@ class AlphaBetaTreeNode(MiniMaxTreeNode):
                 beta = min(beta, value)
                 if alpha >= beta: break # <— šeit notiek beta nogriešana
 
-        self.value = value # piešķir pašai virsotnei heiristisko vērtējumu
         return value
