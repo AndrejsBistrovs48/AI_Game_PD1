@@ -11,5 +11,5 @@ def generate_initial_numbers():
     return generated_numbers
 
 #testing purposes
-print(generate_initial_numbers())
+#print(generate_initial_numbers())
 
