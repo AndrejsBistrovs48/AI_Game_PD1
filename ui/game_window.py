@@ -3,6 +3,8 @@ sys.path.append('game')
 sys.path.append('game/ui')
 
 import tkinter as tk
+import time
+
 from ui.components.button_factory import ButtonFactory
 
 from game.tree_builders.minimax_node import MiniMaxTreeNode
@@ -19,7 +21,7 @@ class GameWindow(tk.Toplevel):
         self._setup_window()
         self.create_widgets()
         self.update_display()
-
+        self.ai_move_start_time = None 
         self.add_log("Starting the game. Chosen number: " + str(self.tree_node.number))
         
         if not self.tree_node.p1_turn:
@@ -138,7 +140,8 @@ class GameWindow(tk.Toplevel):
         self.after(1000, self.ai_move)
 
     def ai_move(self):
-        #Handle AI move based on selected algorithm
+        #Handle AI move and track time based on selected algorithm
+        self.ai_move_start_time = time.time()
         if self.tree_node.finished:
             self.end_game()
             return
@@ -163,6 +166,8 @@ class GameWindow(tk.Toplevel):
             self.end_game()
             return
         
+        turn_time = time.time() - self.ai_move_start_time
+        self.controller.record_ai_turn_time(turn_time)
         self.update_display()
         self.add_log(f"AI ({self.algorithm}) divided by {divisor}. New number: {self.tree_node.number}")
 
@@ -174,12 +179,16 @@ class GameWindow(tk.Toplevel):
 
         # Determine winner
         if player_score > ai_score:
-            winner = "Player wins!"
+            winner = "Player"
+            result_text = "Player wins!"
         elif ai_score > player_score:
-            winner = "AI wins!"
+            winner = "AI"
+            result_text = "AI wins!"
         else:
-            winner = "It's a tie!"
-        
+            winner = "Tie"
+            result_text = "It's a tie!"
+
+        self.controller.record_game_result(winner)
         # Update final display
         self.number_display.config(text=str(self.tree_node.number))
         self.player_score_label.config(text=str(player_score))
@@ -188,7 +197,7 @@ class GameWindow(tk.Toplevel):
         
         self.add_log(f"Game over! Final number: {self.tree_node.number}")
         self.add_log(f"Final scores - Player: {player_score}, AI: {ai_score}")
-        self.add_log(winner)
+        self.add_log(result_text)
         
         # Clear and show restart button
         for widget in self.actions_frame.winfo_children():
@@ -210,3 +219,4 @@ class GameWindow(tk.Toplevel):
         #Return to settings window
         self.destroy()
         self.controller.show_settings()
+        self.controller.settings_window.update_stats_display()

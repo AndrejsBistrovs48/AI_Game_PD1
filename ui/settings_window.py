@@ -3,6 +3,7 @@ from tkinter import messagebox
 from game.utils.number_generator import generate_initial_numbers
 from ui.components.button_factory import ButtonFactory
 from ui.components.settings_section import SettingsSection
+from ui.components.stats_display import StatsDisplay
 
 class SettingsWindow(tk.Toplevel):
     #Game settings configuration window
@@ -19,6 +20,7 @@ class SettingsWindow(tk.Toplevel):
         
         self._setup_window()
         self.create_widgets()
+        self._create_stats_display() 
         self.generate_numbers()
 
     def _setup_window(self):
@@ -63,6 +65,36 @@ class SettingsWindow(tk.Toplevel):
             parent, self.start_game
         )
         self.start_btn.pack(pady=20)
+
+    def _create_stats_display(self):
+        #Create clean statistics display using component
+        self.stats_vars = {
+            'total_games': tk.StringVar(value="0"),
+            'player_wins': tk.StringVar(value="0"),
+            'ai_wins': tk.StringVar(value="0"),
+            'avg_turn': tk.StringVar(value="0.0s")
+        }
+        
+        self.stats_display = StatsDisplay(
+            self,
+            stats_data=self.stats_vars,
+            text=" Game Statistics "
+        )
+        self.stats_display.pack(fill=tk.X, padx=40, pady=(0, 20))
+
+    def update_stats_display(self):
+        #Update stats display with current data
+        stats = self.controller.game_stats
+        self.stats_vars['total_games'].set(str(stats['total_games']))
+        self.stats_vars['player_wins'].set(str(stats['player_wins']))
+        self.stats_vars['ai_wins'].set(str(stats['ai_wins']))
+        
+        # Calculate average turn time
+        if stats['ai_turn_times']:
+            avg_time = sum(stats['ai_turn_times']) / len(stats['ai_turn_times'])
+            self.stats_vars['avg_turn'].set(f"{avg_time:.2f}s")
+        else:
+            self.stats_vars['avg_turn'].set("0.0s")
 
     def generate_numbers(self):
         #Generate valid starting numbers
