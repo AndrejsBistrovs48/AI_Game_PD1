@@ -20,6 +20,8 @@ class GameWindow(tk.Toplevel):
         self._setup_window()
         self.create_widgets()
         self.update_display()
+
+        self.add_log("Starting the game. Chosen number: " + str(self.tree_node.number))
         
         if not self.tree_node.p1_turn:
             self.after(1000, self.ai_move)
@@ -30,8 +32,6 @@ class GameWindow(tk.Toplevel):
 
         TreeClass = MiniMaxTreeNode if self.algorithm == "MiniMax" else AlphaBetaTreeNode # initializing tree
         self.tree_node = TreeClass(int(settings['number']), str(settings['first_player']) == 'Player')
-
-        self.add_log("Starting the game. Chosen number: " + str(self.tree_node.number))
 
     def _setup_window(self):
         """Configure main window properties"""
