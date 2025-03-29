@@ -3,14 +3,13 @@ sys.path.append('game')
 sys.path.append('game/ui')
 
 import tkinter as tk
-import random
 from ui.components.button_factory import ButtonFactory
 
 from game.tree_builders.minimax_node import MiniMaxTreeNode
 from game.tree_builders.alphabeta_node import AlphaBetaTreeNode
 
 class GameWindow(tk.Toplevel):
-    """Main game window handling gameplay and display"""
+    #Main game window handling gameplay and display
     
     def __init__(self, controller, settings):
         super().__init__()
@@ -27,20 +26,20 @@ class GameWindow(tk.Toplevel):
             self.after(1000, self.ai_move)
 
     def _init_game_state(self, settings):
-        """Initialize game state variables"""
+        #Initialize game state variables
         self.algorithm = str(settings['algorithm'])
 
         TreeClass = MiniMaxTreeNode if self.algorithm == "MiniMax" else AlphaBetaTreeNode # initializing tree
         self.tree_node = TreeClass(int(settings['number']), str(settings['first_player']) == 'Player')
 
     def _setup_window(self):
-        """Configure main window properties"""
+        #Configure main window properties
         self.title("Number Strategy Game")
         self.geometry("800x600")
         self.config(bg="#f0f0f0")
 
     def create_widgets(self):
-        """Create all UI elements"""
+        #Create all UI elements
         main_frame = tk.Frame(self, bg="#f0f0f0")
         main_frame.pack(expand=True, fill=tk.BOTH, padx=40, pady=20)
 
@@ -50,7 +49,7 @@ class GameWindow(tk.Toplevel):
         self._create_game_log(main_frame)
 
     def _create_score_display(self, parent):
-        """Create score display widgets"""
+        #Create score display widgets
         frame = tk.Frame(parent, bg="#f0f0f0")
         frame.pack(fill=tk.X, pady=10)
 
@@ -67,14 +66,14 @@ class GameWindow(tk.Toplevel):
         self.current_player_label.pack(side=tk.RIGHT, padx=10)
 
     def _create_score_label(self, parent, text, initial_value):
-        """Helper to create consistent score labels"""
+        # Helper to create consistent score labels
         tk.Label(parent, text=text, bg="#f0f0f0", font=('Arial', 12)).pack(side=tk.LEFT, padx=10)
         label = tk.Label(parent, text=initial_value, bg="#f0f0f0", font=('Arial', 12, 'bold'))
         label.pack(side=tk.LEFT, padx=5)
         return label
 
     def _create_number_display(self, parent):
-        """Create current number display"""
+        #Create current number display
         self.number_display = tk.Label(
             parent, text="", bg="#f0f0f0", fg="#2c3e50",
             font=('Arial', 36, 'bold')
@@ -82,12 +81,12 @@ class GameWindow(tk.Toplevel):
         self.number_display.pack(pady=20)
 
     def _create_action_buttons(self, parent):
-        """Create container for action buttons"""
+        #Create container for action buttons
         self.actions_frame = tk.Frame(parent, bg="#f0f0f0")
         self.actions_frame.pack(pady=20)
 
     def _create_game_log(self, parent):
-        """Create game log widget"""
+        #Create game log widget
         log_frame = tk.LabelFrame(parent, text=" Game Log ", bg="#f0f0f0", font=('Arial', 10))
         log_frame.pack(fill=tk.BOTH, expand=True, pady=10)
 
@@ -99,7 +98,7 @@ class GameWindow(tk.Toplevel):
         self.log_text.config(state=tk.DISABLED)
 
     def update_display(self):
-        """Update all UI elements to reflect current game state"""
+        #Update UI elements to reflect current game state
         node = self.tree_node
         self.number_display.config(text=str(node.number))
         self.player_score_label.config(text=str(node.scores[0]))
@@ -110,7 +109,7 @@ class GameWindow(tk.Toplevel):
         self.update_action_buttons()
 
     def update_action_buttons(self):
-        """Dynamically show only valid division buttons"""
+        #Show only valid division buttons
         for widget in self.actions_frame.winfo_children():
             widget.destroy()
 
@@ -130,7 +129,7 @@ class GameWindow(tk.Toplevel):
                 ).pack(side=tk.LEFT, padx=10)
 
     def make_move(self, divisor):
-        """Handle player move"""
+        #Handle player move
         self.tree_node = self.tree_node.divide_by_2 if divisor == 2 else self.tree_node.divide_by_3
         
         self.update_display()
@@ -139,7 +138,7 @@ class GameWindow(tk.Toplevel):
         self.after(1000, self.ai_move)
 
     def ai_move(self):
-        """Handle AI move based on selected algorithm"""
+        #Handle AI move based on selected algorithm
         if self.tree_node.finished:
             self.end_game()
             return
@@ -168,7 +167,7 @@ class GameWindow(tk.Toplevel):
         self.add_log(f"AI ({self.algorithm}) divided by {divisor}. New number: {self.tree_node.number}")
 
     def end_game(self):
-        """Handle game end conditions"""
+        #Handle game end conditions
         
         player_score = self.tree_node.scores[0]
         ai_score = self.tree_node.scores[1]
@@ -201,13 +200,13 @@ class GameWindow(tk.Toplevel):
         ).pack(side=tk.LEFT, padx=10)
 
     def add_log(self, message):
-        """Add message to game log"""
+        #Add message to game log
         self.log_text.config(state=tk.NORMAL)
         self.log_text.insert(tk.END, message + "\n")
         self.log_text.config(state=tk.DISABLED)
         self.log_text.see(tk.END)
 
     def return_to_settings(self):
-        """Return to settings window"""
+        #Return to settings window
         self.destroy()
         self.controller.show_settings()

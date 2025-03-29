@@ -3,7 +3,7 @@ from ui.components.rounded_button import RoundedButton
 class ButtonFactory:
     """Factory for creating consistent buttons throughout the application"""
     
-    # Common button styles
+    #  button styles
     _ACTION_STYLE = {
         'radius': 8,
         'bg': "#5d6d7e",
