@@ -14,13 +14,13 @@ class AppController:
             'total_games': 0,
             'player_wins': 0,
             'ai_wins': 0,
-            'ai_turn_times': deque(maxlen=10)  # Stores last 10 turn times
+            'ai_turn_times': deque(maxlen=10),  # Stores last 10 turn times,
+            'nodes_visited': 0
         }
 
         self.show_settings()
 
     def record_game_result(self, winner):
-        print("method is called")
         #Record the outcome of a completed game#
         self.game_stats['total_games'] += 1
         if winner == "Player":
@@ -33,10 +33,11 @@ class AppController:
             self.settings_window.update_stats_display()
             self.settings_window.update() 
 
-    def record_ai_turn_time(self, turn_time):
-        print("ai turn time is recorded")
+    def record_ai_turn_time(self, turn_time, nodes_visited):
         #Record time taken for AI to complete a turn#
         self.game_stats['ai_turn_times'].append(turn_time)
+        self.game_stats['nodes_visited'] = self.game_stats['nodes_visited'] + nodes_visited
+        # print(str(self.game_stats['nodes_visited']) + " | " + str(nodes_visited))
         if self.settings_window:
             self.settings_window.update_stats_display()
 

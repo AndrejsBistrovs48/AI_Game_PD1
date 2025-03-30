@@ -31,7 +31,7 @@ class GameWindow(tk.Toplevel):
         #Initialize game state variables
         self.algorithm = str(settings['algorithm'])
 
-        TreeClass = MiniMaxTreeNode if self.algorithm == "MiniMax" else AlphaBetaTreeNode # initializing tree
+        TreeClass = MiniMaxTreeNode if self.algorithm == "Minimax" else AlphaBetaTreeNode # initializing tree
         self.tree_node = TreeClass(int(settings['number']), str(settings['first_player']) == 'Player')
 
     def _setup_window(self):
@@ -146,13 +146,7 @@ class GameWindow(tk.Toplevel):
             self.end_game()
             return
         
-        best_node = None
-        best_value = None
-        for ch in self.tree_node.children:
-            value = ch.algorithm()
-            if best_node is None or value < best_value:
-                best_node = ch
-                best_value = value
+        best_node, node_count, time_taken = self.tree_node.algorithm()
         
         if best_node is None:
             self.end_game()
@@ -166,10 +160,10 @@ class GameWindow(tk.Toplevel):
             self.end_game()
             return
         
-        turn_time = time.time() - self.ai_move_start_time
-        self.controller.record_ai_turn_time(turn_time)
+        self.controller.record_ai_turn_time(time_taken, node_count)
         self.update_display()
         self.add_log(f"AI ({self.algorithm}) divided by {divisor}. New number: {self.tree_node.number}")
+        self.add_log(f"     Stats: AI visited {node_count} nodes and it took {time_taken} nanoseconds")
 
     def end_game(self):
         #Handle game end conditions

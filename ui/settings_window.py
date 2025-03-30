@@ -26,7 +26,7 @@ class SettingsWindow(tk.Toplevel):
     def _setup_window(self):
         #Configure settings/main window properties
         self.title("Game Settings")
-        self.geometry("700x500")
+        self.geometry("700x600")
         self.config(bg="#f0f0f0")
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
@@ -72,7 +72,8 @@ class SettingsWindow(tk.Toplevel):
             'total_games': tk.StringVar(value="0"),
             'player_wins': tk.StringVar(value="0"),
             'ai_wins': tk.StringVar(value="0"),
-            'avg_turn': tk.StringVar(value="0.0s")
+            'avg_turn': tk.StringVar(value="No data"),
+            'nodes_visited': tk.StringVar(value="0")
         }
         
         self.stats_display = StatsDisplay(
@@ -94,7 +95,10 @@ class SettingsWindow(tk.Toplevel):
             avg_time = sum(stats['ai_turn_times']) / len(stats['ai_turn_times'])
             self.stats_vars['avg_turn'].set(f"{avg_time:.2f}s")
         else:
-            self.stats_vars['avg_turn'].set("0.0s")
+            self.stats_vars['avg_turn'].set("No data")
+
+        # Calculate total visited nodes
+        self.stats_vars['nodes_visited'].set(stats['nodes_visited'])
 
     def generate_numbers(self):
         #Generate valid starting numbers

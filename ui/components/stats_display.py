@@ -27,9 +27,10 @@ class StatsDisplay(tk.LabelFrame):
         # Create stats items
         stats_config = [
             ("Games:", self.stats_vars['total_games'], 0, 0),
-            ("Player Wins:", self.stats_vars['player_wins'], 0, 2),
+            ("Player Wins:", self.stats_vars['player_wins'], 2, 0),
             ("AI Wins:", self.stats_vars['ai_wins'], 1, 0),
-            ("Avg AI Turn:", self.stats_vars['avg_turn'], 1, 2)
+            ("Avg AI Turn:", self.stats_vars['avg_turn'], 1, 2),
+            ("AI Nodes visited:", self.stats_vars['nodes_visited'], 2, 2)
         ]
 
         for label_text, var, row, col in stats_config:
