@@ -71,3 +71,10 @@ class TreeNode:
             add_child( self.make_child(self.number/3, not self.p1_turn, scores, bank) )
 
         return self
+    
+    def vertiba(self):
+        win = self.scores[0] - self.scores[1] # spēlētāju punktu starpība - lielāka=labāka
+        moves = (2 if self.number % 2 == 0 else 0) + (-3 if self.number % 3 == 0 else 0) # cik punktu pretinieks var iegūt nākamajā gājienā
+        bank = self.bank # bankas punkti, lielāki=labāki
+
+        return win + moves + bank # kopēja vērtība ir summa no 3 faktoriem
